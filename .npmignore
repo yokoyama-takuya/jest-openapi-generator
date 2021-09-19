@@ -1,0 +1,4 @@
+src
+*config.*
+*.json
+_reporter_for_development.js
