@@ -22,7 +22,7 @@ export type RequestQuerySchema = {
 
 export type RequestBodySchema = {
   required?: boolean;
-  schema: any;
+  content: {[k: string]: {schema: any}} ;
 }
 
 export type AdditionalInfo = {
@@ -30,6 +30,8 @@ export type AdditionalInfo = {
   operationId?: string;
   tags?: string[];
   produces?: string[];
+  security?: Record<string, any>[];
+  consumes?: string [];
   path?: RequestQuerySchema;
   query?: RequestQuerySchema;
   body?: RequestBodySchema;

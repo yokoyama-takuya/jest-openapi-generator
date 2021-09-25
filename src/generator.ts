@@ -80,33 +80,40 @@ export const generator = (
     });
   }
 
-  if (request.body && !parameters.some((v) => v.in === 'body')) {
-    const schema = bodyInfo || {
-      schema: { type: 'object' }
-    };
-    if (!schema.schema.properties) {
-      const properties = Object.keys(request.body).map(key => {
-        return { [key]: valueToSwaggerType(request.body?.[key]) }
-      }).reduce((prev, current) => {
-        const key = Object.keys(current)[0];
-        prev[key] = current[key];
-        return prev;
-      }, {});
-      schema.schema.properties = properties;
-    }
-    if (!schema.schema.example) {
-      schema.schema.example = request.body;
-    }
-    parameters = [
-      ...parameters,
-      {
-        in: 'body',
-        ...schema,
-      },
-    ];
-  }
-
   Paths[request.path][method].parameters = parameters;
+
+
+  // body
+  if (request.body && !Paths[request.path][method].requestBody) {
+    const requestBody = bodyInfo || {
+      content: {}
+    };
+    if (Object.keys(requestBody.content).length === 0) {
+      requestBody.content['application/json'] = { schema: { type: 'object' } }
+    }
+
+    const defaultProperties = Object.keys(request.body).map(key => {
+      return { [key]: valueToSwaggerType(request.body?.[key]) }
+    }).reduce((prev, current) => {
+      const key = Object.keys(current)[0];
+      prev[key] = current[key];
+      return prev;
+    }, {});
+
+    Object.keys(requestBody.content).forEach(k => {
+      if (!requestBody.content[k]?.schema) {
+        requestBody.content[k].schema = { type: 'object' }
+      }
+      if (!requestBody.content[k].schema?.properties) {
+        requestBody.content[k].schema.properties = defaultProperties;
+      }
+      if (!requestBody.content[k].schema?.example) {
+        requestBody.content[k].schema.example = request.body;
+      }
+    })
+
+    Paths[request.path][method].requestBody = requestBody;
+  }
 
   // response
   let responses = Paths[request.path][method].responses;
