@@ -17,13 +17,19 @@ export declare type RequestQuerySchema = {
 };
 export declare type RequestBodySchema = {
     required?: boolean;
-    schema: any;
+    content: {
+        [k: string]: {
+            schema: any;
+        };
+    };
 };
 export declare type AdditionalInfo = {
     summary?: string;
     operationId?: string;
     tags?: string[];
     produces?: string[];
+    security?: Record<string, any>[];
+    consumes?: string[];
     path?: RequestQuerySchema;
     query?: RequestQuerySchema;
     body?: RequestBodySchema;
