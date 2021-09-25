@@ -1,6 +1,6 @@
 {
   "name": "jest-openapi-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -9,11 +9,23 @@
   "repository": "git@github.com:yokoyama-takuya/jest-openapi-generator.git",
   "author": "Yokoyama Takuya <yokoyamatakuya530@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "jest",
+    "swagger",
+    "openapi",
+    "open-api",
+    "spec",
+    "test",
+    "generator",
+    "doc",
+    "documentation"
+  ],
   "scripts": {
     "lint": "eslint ./ --fix",
     "test": "jest ./",
     "build": "rm -rf ./build & yarn tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "pub": "npm version patch --force && npm publish"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.12",

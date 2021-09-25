@@ -71,30 +71,37 @@ const generator = (request, response, info) => {
             }
         });
     }
-    if (request.body && !parameters.some((v) => v.in === 'body')) {
-        const schema = bodyInfo || {
-            schema: { type: 'object' }
-        };
-        if (!schema.schema.properties) {
-            const properties = Object.keys(request.body).map(key => {
-                var _a;
-                return { [key]: valueToSwaggerType((_a = request.body) === null || _a === void 0 ? void 0 : _a[key]) };
-            }).reduce((prev, current) => {
-                const key = Object.keys(current)[0];
-                prev[key] = current[key];
-                return prev;
-            }, {});
-            schema.schema.properties = properties;
-        }
-        if (!schema.schema.example) {
-            schema.schema.example = request.body;
-        }
-        parameters = [
-            ...parameters,
-            Object.assign({ in: 'body' }, schema),
-        ];
-    }
     Paths[request.path][method].parameters = parameters;
+    // body
+    if (request.body && !Paths[request.path][method].requestBody) {
+        const requestBody = bodyInfo || {
+            content: {}
+        };
+        if (Object.keys(requestBody.content).length === 0) {
+            requestBody.content['application/json'] = { schema: { type: 'object' } };
+        }
+        const defaultProperties = Object.keys(request.body).map(key => {
+            var _a;
+            return { [key]: valueToSwaggerType((_a = request.body) === null || _a === void 0 ? void 0 : _a[key]) };
+        }).reduce((prev, current) => {
+            const key = Object.keys(current)[0];
+            prev[key] = current[key];
+            return prev;
+        }, {});
+        Object.keys(requestBody.content).forEach(k => {
+            var _a, _b, _c;
+            if (!((_a = requestBody.content[k]) === null || _a === void 0 ? void 0 : _a.schema)) {
+                requestBody.content[k].schema = { type: 'object' };
+            }
+            if (!((_b = requestBody.content[k].schema) === null || _b === void 0 ? void 0 : _b.properties)) {
+                requestBody.content[k].schema.properties = defaultProperties;
+            }
+            if (!((_c = requestBody.content[k].schema) === null || _c === void 0 ? void 0 : _c.example)) {
+                requestBody.content[k].schema.example = request.body;
+            }
+        });
+        Paths[request.path][method].requestBody = requestBody;
+    }
     // response
     let responses = Paths[request.path][method].responses;
     if (response.json && responseInfo) {

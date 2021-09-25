@@ -1,10 +1,11 @@
 # jest-openapi-generator
 
-Jest OpenAPI Generator can create OpenAPI Specification from test code. 
+Jest OpenAPI Generator can create OpenAPI 3.0 Specification from test code. 
 
 - Simple test code with [Jest](https://github.com/facebook/jest).
 - Can use any http request library.
-- Beautifull document by [Swagger UI](https://swagger.io/tools/swagger-ui/).
+- Test response to use example for OpenAPI.
+- Beautiful document by [Swagger UI](https://swagger.io/tools/swagger-ui/).
 
 
 ## Getting Started
@@ -87,13 +88,13 @@ const Info: JestGenerator.AdditionalInfo = {
   tags: ['Project'],
   query: {
     take: {
-    required: true,
-    schema: {
-      type: 'integer',
-      minimum: 1,
-      maximum: 30,
-    },
-  }
+      required: true,
+      schema: {
+        type: 'integer',
+        minimum: 1,
+        maximum: 30,
+      },
+    }
   },
   response: {
     content: {
@@ -115,14 +116,15 @@ const Info: JestGenerator.AdditionalInfo = {
 describe(`${Request.method} ${Request.path}`, () => {
   it('success', async () => {
     const params = {...Request, query: { take: 30 }};
-    const req = httpMocks.createRequest<NextApiRequest>(params);
-    const res = httpMocks.createResponse<NextApiResponse>();
+    const req = httpMocks.createRequest(params);
+    const res = httpMocks.createResponse();
     // handler is any method. e.g. res.status(200).json({ projects: [] });
     await handler(req, res);
 
+    const json = res._getJSONData();
     const result = { 
       statusCode: res._getStatusCode(),
-      json: res._getJSONData(),
+      json,
     };
     generator(params, result, Info);
     expect(json.projects.length).toBe(0);
@@ -130,14 +132,15 @@ describe(`${Request.method} ${Request.path}`, () => {
   
   it('error', async () => {
     const params = {...Request, query: { invalid: 'xxxxx' }};
-    const req = httpMocks.createRequest<NextApiRequest>(params);
-    const res = httpMocks.createResponse<NextApiResponse>();
+    const req = httpMocks.createRequest(params);
+    const res = httpMocks.createResponse();
     // handler is any method. e.g. res.status(405).json({ status: 405 });
     await handler(req, res);
 
+    const json = res._getJSONData();
     const result = { 
       statusCode: res._getStatusCode(),
-      json: res._getJSONData(),
+      json,
     };
     generator(params, result, Info);
     expect(json.status).toBe(405);
@@ -148,3 +151,5 @@ describe(`${Request.method} ${Request.path}`, () => {
   });
 });
 ```
+
+[>> See more usage](./src/generator.test.ts)

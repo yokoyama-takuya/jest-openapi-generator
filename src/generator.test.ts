@@ -94,24 +94,28 @@ describe('generator', () => {
               "example": 'id',
               "type": "string"
             }
-          }, {
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "test": {
-                  "type": "string"
-                },
-                "filter": {
-                  "type": "number",
+          }],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "test": {
+                      "type": "string"
+                    },
+                    "filter": {
+                      "type": "number",
+                    }
+                  },
+                  "example": {
+                    "test": "body",
+                    "filter": 1.23,
+                  }
                 }
-              },
-              "example": {
-                "test": "body",
-                "filter": 1.23,
               }
             }
-          }],
+          },
           "responses": {
             "200": {
               "content": {
@@ -186,17 +190,21 @@ describe('generator', () => {
         },
       },
       body: {
-        schema: {
-          type: 'object',
-          properties: {
-            testId: {
-              type: "string",
-              format: 'uuid'
-            },
-            point: {
-              type: "number",
-              format: 'float'
-            },
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                testId: {
+                  type: "string",
+                  format: 'uuid'
+                },
+                point: {
+                  type: "number",
+                  format: 'float'
+                },
+              }
+            }
           }
         }
       },
@@ -243,26 +251,30 @@ describe('generator', () => {
               "enum": ["active", "finished"],
               "example": "finished"
             }
-          }, {
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "testId": {
-                  "type": "string",
-                  "format": "uuid",
-                },
-                "point": {
-                  "type": "number",
-                  'format': "float",
+          }],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "testId": {
+                      "type": "string",
+                      "format": "uuid",
+                    },
+                    "point": {
+                      "type": "number",
+                      'format': "float",
+                    }
+                  },
+                  "example": {
+                    "testId": "uuid",
+                    "point": 1.23
+                  }
                 }
-              },
-              "example": {
-                "testId": "uuid",
-                "point": 1.23
               }
             }
-          }],
+          },
           "responses": {
             "200": {
               "content": {
